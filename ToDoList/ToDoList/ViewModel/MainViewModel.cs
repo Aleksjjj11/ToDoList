@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ToDoList.Domain;
@@ -18,6 +17,29 @@ namespace ToDoList.ViewModel
 
         public ObservableCollection<TodoItem> TodoItems { get; set; }
 
+        private TodoItem _selectedTodoItem;
+
+        public TodoItem SelectedTodoItem
+        {
+            get => _selectedTodoItem;
+            set
+            {
+                _selectedTodoItem = value;
+                OnPropertyChanged(nameof(SelectedTodoItem));
+            }
+        }
+
+        private double _translationYEditForm;
+        public double TranslationYEditForm
+        {
+            get => _translationYEditForm;
+            set
+            {
+                _translationYEditForm = value;
+                OnPropertyChanged(nameof(TranslationYEditForm));
+            }
+        }
+
         private string _newTodoText;
         public string NewTodoText
         {
@@ -32,7 +54,7 @@ namespace ToDoList.ViewModel
         private Command _deleteTodoItemCommand;
         public Command DeleteTodoItemCommand => _deleteTodoItemCommand ?? (_deleteTodoItemCommand = new Command<TodoItem>(async item =>
         {
-            await Task.Delay(710);
+            await Task.Delay(650);
             TodoItems.Remove(item);
         }));
 
@@ -42,12 +64,31 @@ namespace ToDoList.ViewModel
         {
             TodoItems.Add(new TodoItem
             {
-                Description = NewTodoText,
+                Title = NewTodoText,
+                Description = string.Empty,
                 IsDone = false,
             });
 
             NewTodoText = string.Empty;
         }));
+
+        private Command _selectTodoItemCommand;
+
+        public Command SelectTodoItemCommand => _selectTodoItemCommand ?? (_selectTodoItemCommand =
+            new Command<TodoItem>(
+                item =>
+                {
+                    SelectedTodoItem = item;
+                }));
+
+        private Command _resetSelectedTodoItemCommand;
+
+        public Command ResetSelectedTodoItemCommand => _resetSelectedTodoItemCommand ?? (_resetSelectedTodoItemCommand =
+            new Command(
+                () =>
+                {
+                    SelectedTodoItem = null;
+                }));
 
         public void SaveTodoListInPreferences()
         {
