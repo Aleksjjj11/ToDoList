@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:ToDoList.ViewModel;assembly=ToDoList"
+             xmlns:domain="clr-namespace:ToDoList.Domain;assembly=ToDoList"
+             x:Class="ToDoList.MainPage"
+             x:DataType="viewModel:MainViewModel">
+
+    <StackLayout Orientation="Vertical" Padding="5">
+        <FlexLayout Direction="Row">
+            <Entry FlexLayout.Grow="0.8"
+                   Text="{Binding NewTodoText}"/>
+            <Button FlexLayout.Grow="0.2" 
+                    ImageSource="outline_add_circle_outline_black_24dp.png" 
+                    CornerRadius="5"
+                    BackgroundColor="Transparent"
+                    Command="{Binding AddTodoItemCommand}"/>
+        </FlexLayout>
+        
+        <StackLayout>
+            <BindableLayout.ItemsSource>
+                <Binding Path="TodoItems"/>
+            </BindableLayout.ItemsSource>
+            <BindableLayout.EmptyViewTemplate>
+                <DataTemplate>
+                    <FlexLayout></FlexLayout>
+                </DataTemplate>
+            </BindableLayout.EmptyViewTemplate>
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type domain:TodoItem}">
+                    <FlexLayout Direction="Row">
+                        <CheckBox IsChecked="{Binding IsDone, Mode=TwoWay}"/>
+                        <Label TextColor="Red"
+                               FlexLayout.AlignSelf="Center"
+                               FlexLayout.Grow="0.8">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Description}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="True" TargetType="{x:Type Label}">
+                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="False" TargetType="{x:Type Label}">
+                                    <Setter Property="TextDecorations" Value="Underline"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Button ImageSource="outline_delete_black_24dp.png"
+                                FlexLayout.Grow="0.2"
+                                CornerRadius="5"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=DeleteTodoItemCommand}"
+                                CommandParameter="{Binding .}"
+                                BackgroundColor="Transparent"/>
+                    </FlexLayout>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>
