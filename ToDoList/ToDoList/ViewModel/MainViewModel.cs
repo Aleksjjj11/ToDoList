@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ToDoList.Domain;
 using Xamarin.Essentials;
@@ -28,8 +30,9 @@ namespace ToDoList.ViewModel
         }
 
         private Command _deleteTodoItemCommand;
-        public Command DeleteTodoItemCommand => _deleteTodoItemCommand ?? (_deleteTodoItemCommand = new Command<TodoItem>(item =>
+        public Command DeleteTodoItemCommand => _deleteTodoItemCommand ?? (_deleteTodoItemCommand = new Command<TodoItem>(async item =>
         {
+            await Task.Delay(710);
             TodoItems.Remove(item);
         }));
 

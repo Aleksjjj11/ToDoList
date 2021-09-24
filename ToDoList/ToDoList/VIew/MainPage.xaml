@@ -5,18 +5,18 @@
              xmlns:domain="clr-namespace:ToDoList.Domain;assembly=ToDoList"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
+             xmlns:xamanimation="clr-namespace:Xamanimation;assembly=Xamanimation"
              x:Class="ToDoList.MainPage"
              x:DataType="viewModel:MainViewModel">
-
     <StackLayout Orientation="Vertical" Padding="5">
         <Frame Padding="1, 0" 
                Margin="0, 5"
                CornerRadius="10"
                BackgroundColor="#556495ed">
             <FlexLayout Direction="Row">
-                <Entry FlexLayout.Grow="0.8"
+                <Entry FlexLayout.Grow="0.85"
                        Text="{Binding NewTodoText}"/>
-                <ImageButton FlexLayout.Grow="0.2"
+                <ImageButton FlexLayout.Grow="0.15"
                              FlexLayout.AlignSelf="Center"
                              xct:IconTintColorEffect.TintColor="CornflowerBlue"
                              Source="outline_add_circle_outline_black_24dp.png" 
@@ -26,67 +26,91 @@
                              Command="{Binding AddTodoItemCommand}"/>
             </FlexLayout>
         </Frame>
-
-        <StackLayout>
-            <BindableLayout.ItemsSource>
-                <Binding Path="TodoItems"/>
-            </BindableLayout.ItemsSource>
-            <BindableLayout.EmptyViewTemplate>
-                <DataTemplate>
-                    <FlexLayout Direction="Column">
-                        <Label Text="Что-то пусто?!?"
+        <ScrollView>
+            <StackLayout>
+                <BindableLayout.ItemsSource>
+                    <Binding Path="TodoItems"/>
+                </BindableLayout.ItemsSource>
+                <BindableLayout.EmptyViewTemplate>
+                    <DataTemplate>
+                        <FlexLayout Direction="Column">
+                            <Label Text="Что-то пусто?!?"
                                TextColor="CornflowerBlue"
                                FontSize="Title"
                                FlexLayout.Grow="0.1"
                                FlexLayout.AlignSelf="Center"
                                HorizontalTextAlignment="Center"/>
 
-                        <forms:AnimationView Animation="empty.json"
+                            <forms:AnimationView Animation="empty.json"
                                              AnimationSource="AssetOrBundle"
                                              RepeatMode="Infinite"
                                              AutoPlay="True"
                                              FlexLayout.Grow="0.9"
                                              HeightRequest="250"/>
-                    </FlexLayout>
-                </DataTemplate>
-            </BindableLayout.EmptyViewTemplate>
-            <BindableLayout.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type domain:TodoItem}">
-                    <Frame Padding="0">
-                        <StackLayout Orientation="Vertical">
-                            <FlexLayout Direction="Row">
-                                <CheckBox IsChecked="{Binding IsDone, Mode=TwoWay}"/>
-                                <Label Text="{Binding Description}"
-                                       FontSize="Subtitle"
+                        </FlexLayout>
+                    </DataTemplate>
+                </BindableLayout.EmptyViewTemplate>
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type domain:TodoItem}">
+                        <Frame Padding="0" x:Name="todoItem">
+                            <Frame.Resources>
+                                <xamanimation:TranslateToAnimation 
+                                x:Key="DeleteAnimation"
+                                Target="{x:Reference todoItem}"
+                                Easing="Linear"
+                                TranslateX="2000"
+                                Duration="600"/>
+                            </Frame.Resources>
+                            <StackLayout Orientation="Vertical">
+                                <FlexLayout Direction="Row">
+                                    <CheckBox IsChecked="{Binding IsDone, Mode=TwoWay}"/>
+                                    <Label Text="{Binding Description}"
+                                       FontSize="24"
                                        TextColor="Black"
                                        FlexLayout.AlignSelf="Center"
-                                       FlexLayout.Grow="0.8">
-                                    <Label.Triggers>
-                                        <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="True" TargetType="{x:Type Label}">
-                                            <Setter Property="TextDecorations" Value="Strikethrough"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="False" TargetType="{x:Type Label}">
-                                            <Setter Property="TextDecorations" Value="Underline"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                                <ImageButton Source="outline_delete_black_24dp.png"
+                                       FlexLayout.Grow="0.85">
+                                        <Label.Triggers>
+                                            <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="True" TargetType="{x:Type Label}">
+                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                <DataTrigger.EnterActions>
+                                                    <xamanimation:AnimateColor TargetProperty="Label.TextColor" To="Plum" Duration="200"/>
+                                                    <xamanimation:AnimateDouble TargetProperty="Label.FontSize" From="24" To="20" Duration="200"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="False" TargetType="{x:Type Label}">
+                                                <Setter Property="TextDecorations" Value="Underline"/>
+                                                <DataTrigger.EnterActions>
+                                                    <xamanimation:AnimateDouble TargetProperty="Label.FontSize" From="20" To="24" Duration="200"/>
+                                                    <xamanimation:AnimateColor TargetProperty="Label.TextColor" From="Plum" To="Black" Duration="200"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <ImageButton Source="outline_delete_black_24dp.png"
                                              xct:IconTintColorEffect.TintColor="IndianRed"
                                              HeightRequest="40"
-                                             FlexLayout.Grow="0.2"
+                                             FlexLayout.Grow="0.15"
                                              CornerRadius="5"
                                              Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=DeleteTodoItemCommand}"
                                              CommandParameter="{Binding .}"
-                                             BackgroundColor="Transparent"/>
+                                             BackgroundColor="Transparent">
+                                        <ImageButton.Triggers>
+                                            <EventTrigger Event="Clicked">
+                                                <xamanimation:BeginAnimation
+                                                Animation="{StaticResource DeleteAnimation}" />
+                                            </EventTrigger>
+                                        </ImageButton.Triggers>
+                                    </ImageButton>
 
-                            </FlexLayout>
+                                </FlexLayout>
 
-                            <BoxView BackgroundColor="CornflowerBlue" HeightRequest="1"/>
-                        </StackLayout>
-                    </Frame>
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </StackLayout>
+                                <BoxView BackgroundColor="CornflowerBlue" HeightRequest="1"/>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </ScrollView>
     </StackLayout>
 
 </ContentPage>
