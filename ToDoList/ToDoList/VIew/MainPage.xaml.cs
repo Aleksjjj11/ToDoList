@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using ToDoList.ViewModel;
 using Xamarin.Forms;
@@ -8,10 +7,8 @@ namespace ToDoList
 {
     public partial class MainPage : ContentPage
     {
-        private uint _duration = 100;
-        private bool _isBackdropTapEnabled = false;
-        private double _lastPanY = 0;
-        private double _openY = (Device.RuntimePlatform == "Android") ? 20 : 60;
+        private readonly uint _duration = 400;
+        private readonly double _openY = (Device.RuntimePlatform == "Android") ? 20 : 60;
 
         public MainPage()
         {
@@ -85,11 +82,6 @@ namespace ToDoList
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             await CloseEditForm();
-        }
-
-        private void PinchGestureRecognizer_OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
-        {
-            
         }
     }
 }
