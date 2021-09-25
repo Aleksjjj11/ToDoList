@@ -12,13 +12,13 @@ namespace ToDoList.ViewModel
         public MainViewModel()
         {
             TodoItems = new ObservableCollection<TodoItem>();
+            SelectedTodoItem = new TodoItem();
             LoadTodoListFromPreferences();
         }
 
         public ObservableCollection<TodoItem> TodoItems { get; set; }
 
         private TodoItem _selectedTodoItem;
-
         public TodoItem SelectedTodoItem
         {
             get => _selectedTodoItem;
@@ -29,16 +29,7 @@ namespace ToDoList.ViewModel
             }
         }
 
-        private double _translationYEditForm;
-        public double TranslationYEditForm
-        {
-            get => _translationYEditForm;
-            set
-            {
-                _translationYEditForm = value;
-                OnPropertyChanged(nameof(TranslationYEditForm));
-            }
-        }
+        private int _selectedTodoItemNumber;
 
         private string _newTodoText;
         public string NewTodoText
@@ -62,6 +53,8 @@ namespace ToDoList.ViewModel
 
         public Command AddTodoItemCommand => _addTodoItemCommand ?? (_addTodoItemCommand = new Command(() =>
         {
+            if (string.IsNullOrWhiteSpace(NewTodoText)) return;
+
             TodoItems.Add(new TodoItem
             {
                 Title = NewTodoText,
@@ -78,7 +71,9 @@ namespace ToDoList.ViewModel
             new Command<TodoItem>(
                 item =>
                 {
-                    SelectedTodoItem = item;
+                    SelectedTodoItem.Title = item.Title;
+                    SelectedTodoItem.Description = item.Description;
+                    _selectedTodoItemNumber = TodoItems.IndexOf(item);
                 }));
 
         private Command _resetSelectedTodoItemCommand;
@@ -87,8 +82,17 @@ namespace ToDoList.ViewModel
             new Command(
                 () =>
                 {
-                    SelectedTodoItem = null;
+                    SelectedTodoItem.Title = string.Empty;
+                    SelectedTodoItem.Description = string.Empty;
                 }));
+
+        private Command _submitChangesCommand;
+        public Command SubmitChangesCommand => _submitChangesCommand ?? (_submitChangesCommand = new Command(() =>
+        {
+            var itemToSubmitChanges = TodoItems[_selectedTodoItemNumber];
+            itemToSubmitChanges.Title = SelectedTodoItem.Title;
+            itemToSubmitChanges.Description = SelectedTodoItem.Description;
+        }));
 
         public void SaveTodoListInPreferences()
         {

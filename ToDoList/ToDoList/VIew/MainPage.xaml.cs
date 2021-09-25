@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using ToDoList.ViewModel;
 using Xamarin.Forms;
@@ -20,10 +21,18 @@ namespace ToDoList
 
         private async void PanGestureRecognizer_OnPanUpdated(object sender, PanUpdatedEventArgs e)
         {
-            //if (BindingContext is MainViewModel viewModel)
-            //{
-            //    viewModel.TranslationYEditForm = _openY + e.TotalY;
-            //}
+            if (e.StatusType == GestureStatus.Completed && EditFormDrawer.TranslationY > 0)
+            {
+                await CloseEditForm();
+            }
+            else if (e.StatusType == GestureStatus.Completed && EditFormDrawer.TranslationY < 0)
+            {
+                await OpenEditForm();
+            }
+            else if (EditFormDrawer.TranslationY > 0)
+            {
+                EditFormDrawer.TranslationY += e.TotalY;
+            }
         }
 
         private async Task CloseEditForm()
@@ -33,6 +42,8 @@ namespace ToDoList
                 Backdrop.FadeTo(0, length: _duration),
                 EditFormDrawer.TranslateTo(0, 460, length: _duration, easing: Easing.Linear)
             );
+
+            Backdrop.InputTransparent = true;
         }
 
         private async Task OpenEditForm()
@@ -42,14 +53,13 @@ namespace ToDoList
                 Backdrop.FadeTo(1, length: _duration),
                 EditFormDrawer.TranslateTo(0, _openY, length: _duration, easing: Easing.Linear)
             );
+
+            Backdrop.InputTransparent = false;
         }
 
         private async void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
         {
-            if (_isBackdropTapEnabled)
-            {
-                await CloseEditForm();
-            }
+            await CloseEditForm();
         }
 
         private async void FrameTapGestureRecognizer_OnTapped(object sender, EventArgs e)
@@ -70,6 +80,16 @@ namespace ToDoList
             {
                 await CloseEditForm();
             }
+        }
+        
+        private async void Button_OnClicked(object sender, EventArgs e)
+        {
+            await CloseEditForm();
+        }
+
+        private void PinchGestureRecognizer_OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
+        {
+            
         }
     }
 }

@@ -17,14 +17,23 @@
             </StackLayout.GestureRecognizers>
             <Frame Padding="1, 0" 
                    Margin="0, 5"
-                   CornerRadius="10"
-                   BackgroundColor="#556495ed">
+                   CornerRadius="10">
+                <Frame.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#aaB9AAF7"/>
+                        <GradientStop Color="#55B9AAF7"/>
+                        <GradientStop Color="#44B9AAF7"/>
+                        <GradientStop Color="#55B9AAF7"/>
+                        <GradientStop Color="#aaB9AAF7"/>
+                    </LinearGradientBrush>
+                </Frame.Background>
                 <FlexLayout Direction="Row">
                     <Entry FlexLayout.Grow="0.85"
-                       Text="{Binding NewTodoText}"/>
+                       Text="{Binding NewTodoText}"
+                       ClearButtonVisibility="WhileEditing"/>
                     <ImageButton FlexLayout.Grow="0.15"
                              FlexLayout.AlignSelf="Center"
-                             xct:IconTintColorEffect.TintColor="CornflowerBlue"
+                             xct:IconTintColorEffect.TintColor="#ED5FB6"
                              Source="outline_add_circle_outline_black_24dp.png" 
                              CornerRadius="5"
                              HeightRequest="40"
@@ -33,11 +42,11 @@
                 </FlexLayout>
             </Frame>
             <ScrollView>
-                <FlexLayout Direction="Column">
-                    <FlexLayout.Behaviors>
+                <StackLayout Orientation="Vertical" Spacing="10">
+                    <StackLayout.Behaviors>
                         <xamanimation:EntranceTransition
                         Duration="150"/>
-                    </FlexLayout.Behaviors>
+                    </StackLayout.Behaviors>
                     <BindableLayout.ItemsSource>
                         <Binding Path="TodoItems"/>
                     </BindableLayout.ItemsSource>
@@ -45,24 +54,35 @@
                         <DataTemplate>
                             <FlexLayout Direction="Column">
                                 <Label Text="Что-то пусто?!?"
-                               TextColor="CornflowerBlue"
-                               FontSize="Title"
-                               FlexLayout.Grow="0.1"
-                               FlexLayout.AlignSelf="Center"
-                               HorizontalTextAlignment="Center"/>
+                                       TextColor="CornflowerBlue"
+                                       FontSize="Title"
+                                       FlexLayout.Grow="0.1"
+                                       FlexLayout.AlignSelf="Center"
+                                       HorizontalTextAlignment="Center"/>
 
                                 <forms:AnimationView Animation="empty.json"
-                                             AnimationSource="AssetOrBundle"
-                                             RepeatMode="Infinite"
-                                             AutoPlay="True"
-                                             FlexLayout.Grow="0.9"
-                                             HeightRequest="250"/>
+                                                     AnimationSource="AssetOrBundle"
+                                                     RepeatMode="Infinite"
+                                                     AutoPlay="True"
+                                                     FlexLayout.Grow="0.9"
+                                                     HeightRequest="250"/>
                             </FlexLayout>
                         </DataTemplate>
                     </BindableLayout.EmptyViewTemplate>
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="{x:Type domain:TodoItem}">
-                            <Frame Padding="0" x:Name="todoItem">
+                            <Frame Padding="0" 
+                                   x:Name="todoItem"
+                                   CornerRadius="5">
+                                <Frame.Background>
+                                    <LinearGradientBrush>
+                                       <GradientStopCollection>
+                                           <GradientStop Color="#FFDFA5"/>
+                                           <GradientStop Color="#55FFDFA5"/>
+                                           <GradientStop Color="#55FFDFA5"/>
+                                        </GradientStopCollection>
+                                    </LinearGradientBrush>
+                                </Frame.Background>
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="FrameTapGestureRecognizer_OnTapped"
                                                           Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=SelectTodoItemCommand}"
@@ -77,13 +97,14 @@
                                         Duration="600"/>
                                 </Frame.Resources>
                                 <StackLayout Orientation="Vertical">
-                                    <FlexLayout Direction="Row">
-                                        <CheckBox IsChecked="{Binding IsDone, Mode=TwoWay}"/>
+                                    <Grid ColumnDefinitions="*, 7*, *">
+                                        <CheckBox IsChecked="{Binding IsDone, Mode=TwoWay}"
+                                                  Grid.Column="0"/>
                                         <Label Text="{Binding Title}"
-                                       FontSize="24"
-                                       TextColor="Black"
-                                       FlexLayout.AlignSelf="Center"
-                                       FlexLayout.Grow="0.85">
+                                               LineBreakMode="WordWrap"
+                                               FontSize="24"
+                                               TextColor="Black"
+                                               Grid.Column="1">
                                             <Label.Triggers>
                                                 <DataTrigger Binding="{Binding IsDone, Mode=OneWay}" Value="True" TargetType="{x:Type Label}">
                                                     <Setter Property="TextDecorations" Value="Strikethrough"/>
@@ -102,9 +123,9 @@
                                             </Label.Triggers>
                                         </Label>
                                         <ImageButton Source="outline_delete_black_24dp.png"
-                                             xct:IconTintColorEffect.TintColor="IndianRed"
+                                             xct:IconTintColorEffect.TintColor="#CD3D3D"
                                              HeightRequest="40"
-                                             FlexLayout.Grow="0.15"
+                                             Grid.Column="2"
                                              CornerRadius="5"
                                              Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=DeleteTodoItemCommand}"
                                              CommandParameter="{Binding .}"
@@ -112,26 +133,24 @@
                                             <ImageButton.Triggers>
                                                 <EventTrigger Event="Clicked">
                                                     <xamanimation:BeginAnimation
-                                                Animation="{StaticResource DeleteAnimation}" />
+                                                        Animation="{StaticResource DeleteAnimation}" />
                                                 </EventTrigger>
                                             </ImageButton.Triggers>
                                         </ImageButton>
 
-                                    </FlexLayout>
-
-                                    <BoxView BackgroundColor="CornflowerBlue" HeightRequest="1"/>
+                                    </Grid>
                                 </StackLayout>
                             </Frame>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
-                </FlexLayout>
+                </StackLayout>
             </ScrollView>
         </StackLayout>
 
         <!--Backdrop-->
         <BoxView Color="#4B000000"
                  Opacity="0"
-                 InputTransparent="True"
+                 InputTransparent="true"
                  x:Name="Backdrop">
             <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped"/>
@@ -143,42 +162,50 @@
                HeightRequest="400"
                BackgroundColor="White"
                CornerRadius="20"
-               TranslationY="460"
                VerticalOptions="End"
+               TranslationY="460"
                Padding="15, 6">
             <Frame.GestureRecognizers>
-                <!--<PanGestureRecognizer PanUpdated="PanGestureRecognizer_OnPanUpdated"/>-->
-                <SwipeGestureRecognizer Swiped="SwipeGestureRecognizer_OnSwiped" Direction="Down"
-                                        Command="{Binding ResetSelectedTodoItemCommand}"/>
+                <PanGestureRecognizer PanUpdated="PanGestureRecognizer_OnPanUpdated"/>
             </Frame.GestureRecognizers>
 
-            <VisualElement.Behaviors>
-                <!--DOESN'T WORK-->
-                <!--<xamanimation:AnimateProgressDouble
-                    TargetProperty="VisualElement.TranslationY"
-                    Progress="{Binding Path=TranslationYEditForm}" 
-                    Minimum="0"
-                    Maximum="200"
-                    From="0"
-                    To="100"/>-->
-                
-            </VisualElement.Behaviors>
             <StackLayout Orientation="Vertical" Padding="0, 4">
                 <BoxView CornerRadius="2" 
                          HeightRequest="4" 
                          WidthRequest="40"
                          BackgroundColor="LightGray"
-                         HorizontalOptions="Center"/>
+                         HorizontalOptions="Center">
+                </BoxView>
+
                 <Label Text="Редактирование"
                        HorizontalOptions="Center"
                        FontSize="18"
                        FontAttributes="Bold"/>
-                <Entry Placeholder="Заголовок"
-                       Text="{Binding SelectedTodoItem.Title}"/>
-                <Entry Placeholder="Описание"
-                       Text="{Binding SelectedTodoItem.Description}"/>
-            </StackLayout>
 
+                <ScrollView>
+                    <ScrollView.Behaviors>
+                        <xamanimation:ScrollViewScrollBehavior x:Name="EditFormScrollBehavior"/>
+                    </ScrollView.Behaviors>
+                    <StackLayout>
+                        <Editor Placeholder="Заголовок"
+                                Text="{Binding SelectedTodoItem.Title}"
+                                AutoSize="TextChanges"/>
+
+                        <Editor Placeholder="Описание"
+                                Text="{Binding SelectedTodoItem.Description}"
+                                AutoSize="TextChanges"/>
+
+                        <Button Text="Применить" 
+                                Command="{Binding SubmitChangesCommand}"
+                                Clicked="Button_OnClicked"
+                                CornerRadius="5"
+                                TextColor="White"
+                                BackgroundColor="CornflowerBlue"
+                                Margin="0, 0, 0, 5"/>
+                    </StackLayout>
+                </ScrollView>
+
+            </StackLayout>
         </Frame>
     </Grid>
 </ContentPage>
