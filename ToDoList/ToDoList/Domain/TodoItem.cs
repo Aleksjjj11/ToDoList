@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Xamarin.Forms;
 
 namespace ToDoList.Domain
@@ -8,6 +9,8 @@ namespace ToDoList.Domain
         private string _description;
         private bool _isDone;
         private string _title;
+        private DateTime? _startEventDateTime;
+        private DateTime? _endEventDateTime;
 
         [JsonProperty("description")]
         public string Description
@@ -39,6 +42,28 @@ namespace ToDoList.Domain
             {
                 _title = value;
                 OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        [JsonProperty("startEventDateTime")]
+        public DateTime? StartEventDateTime
+        {
+            get => _startEventDateTime;
+            set
+            {
+                _startEventDateTime = value;
+                OnPropertyChanged(nameof(StartEventDateTime));
+            }
+        }
+
+        [JsonProperty("endEventDateTime")]
+        public DateTime? EndEventDateTime
+        {
+            get => _endEventDateTime;
+            set
+            {
+                _endEventDateTime = value;
+                OnPropertyChanged(nameof(EndEventDateTime));
             }
         }
     }

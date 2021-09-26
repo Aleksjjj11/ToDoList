@@ -10,7 +10,12 @@
              xmlns:toDoList="clr-namespace:ToDoList;assembly=ToDoList"
              x:Class="ToDoList.MainPage"
              x:DataType="viewModel:MainViewModel">
-    <Grid>
+    <ContentPage.Resources>
+        <xamanimation:HeartAnimation x:Key="HeartAnimation"
+                                     Duration="400"
+                                     Target="{x:Reference AddButton}"/>
+    </ContentPage.Resources>
+    <Grid BackgroundColor="#82B1FF">
         <StackLayout Orientation="Vertical" Padding="5">
             <StackLayout.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="PanGestureRecognizer_OnPanUpdated"/>
@@ -20,11 +25,11 @@
                    CornerRadius="10">
                 <Frame.Background>
                     <LinearGradientBrush>
-                        <GradientStop Color="#aaB9AAF7"/>
-                        <GradientStop Color="#55B9AAF7"/>
-                        <GradientStop Color="#44B9AAF7"/>
-                        <GradientStop Color="#55B9AAF7"/>
-                        <GradientStop Color="#aaB9AAF7"/>
+                        <GradientStop Color="#aaBBDEFB"/>
+                        <GradientStop Color="#55BBDEFB"/>
+                        <GradientStop Color="#44BBDEFB"/>
+                        <GradientStop Color="#55BBDEFB"/>
+                        <GradientStop Color="#aaBBDEFB"/>
                     </LinearGradientBrush>
                 </Frame.Background>
                 <FlexLayout Direction="Row">
@@ -32,13 +37,21 @@
                        Text="{Binding NewTodoText}"
                        ClearButtonVisibility="WhileEditing"/>
                     <ImageButton FlexLayout.Grow="0.15"
-                             FlexLayout.AlignSelf="Center"
-                             xct:IconTintColorEffect.TintColor="#ED5FB6"
-                             Source="outline_add_circle_outline_black_24dp.png" 
-                             CornerRadius="5"
-                             HeightRequest="40"
-                             BackgroundColor="Transparent"
-                             Command="{Binding AddTodoItemCommand}"/>
+                                 x:Name="AddButton"
+                                 FlexLayout.AlignSelf="Center"
+                                 xct:IconTintColorEffect.TintColor="#448AFF"
+                                 Source="outline_add_circle_outline_black_24dp.png" 
+                                 CornerRadius="5"
+                                 HeightRequest="40"
+                                 BackgroundColor="Transparent"
+                                 Command="{Binding AddTodoItemCommand}">
+                        <ImageButton.Triggers>
+                            <EventTrigger Event="Clicked">
+                                <xamanimation:BeginAnimation
+                                    Animation="{StaticResource HeartAnimation}"/>
+                            </EventTrigger>
+                        </ImageButton.Triggers>
+                    </ImageButton>
                 </FlexLayout>
             </Frame>
             <ScrollView>
@@ -54,7 +67,7 @@
                         <DataTemplate>
                             <FlexLayout Direction="Column">
                                 <Label Text="Что-то пусто?!?"
-                                       TextColor="CornflowerBlue"
+                                       TextColor="#E3F2FD"
                                        FontSize="Title"
                                        FlexLayout.Grow="0.1"
                                        FlexLayout.AlignSelf="Center"
@@ -71,18 +84,10 @@
                     </BindableLayout.EmptyViewTemplate>
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="{x:Type domain:TodoItem}">
-                            <Frame Padding="0" 
+                            <Frame Padding="5" 
                                    x:Name="todoItem"
-                                   CornerRadius="5">
-                                <Frame.Background>
-                                    <LinearGradientBrush>
-                                       <GradientStopCollection>
-                                           <GradientStop Color="#FFDFA5"/>
-                                           <GradientStop Color="#55FFDFA5"/>
-                                           <GradientStop Color="#55FFDFA5"/>
-                                        </GradientStopCollection>
-                                    </LinearGradientBrush>
-                                </Frame.Background>
+                                   BackgroundColor="White"
+                                   CornerRadius="3">
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="FrameTapGestureRecognizer_OnTapped"
                                                           Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=SelectTodoItemCommand}"
@@ -186,7 +191,7 @@
                     <ScrollView.Behaviors>
                         <xamanimation:ScrollViewScrollBehavior x:Name="EditFormScrollBehavior"/>
                     </ScrollView.Behaviors>
-                    <StackLayout>
+                    <StackLayout Spacing="15">
                         <Editor Placeholder="Заголовок"
                                 Text="{Binding SelectedTodoItem.Title}"
                                 AutoSize="TextChanges"/>
@@ -194,6 +199,50 @@
                         <Editor Placeholder="Описание"
                                 Text="{Binding SelectedTodoItem.Description}"
                                 AutoSize="TextChanges"/>
+
+                        <FlexLayout Direction="Row">
+                            <ImageButton Source="calendar"
+                                         HeightRequest="40"
+                                         FlexLayout.Grow="0.1"
+                                         BackgroundColor="Transparent"
+                                         xct:IconTintColorEffect.TintColor="CornflowerBlue"
+                                         Clicked="ImageButtonStartEvent_OnClicked"/>
+
+                            <DatePicker x:Name="StartEventDatePicker" IsVisible="False"/>
+                            <TimePicker x:Name="StartEventTimePicker" IsVisible="False"/>
+
+                            <Label Text="{Binding SelectedTodoItem.StartEventDateTime, Mode=OneWay, StringFormat='{0:dd.MM.yyyy} {0:HH:mm}', TargetNullValue='Дата и время начала события'}"
+                                   TextColor="Black"
+                                   VerticalTextAlignment="Center"
+                                   FontSize="Subtitle"
+                                   FlexLayout.Grow="0.9">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="ImageButtonStartEvent_OnClicked"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </FlexLayout>
+
+                        <FlexLayout Direction="Row">
+                            <ImageButton Source="calendar"
+                                         HeightRequest="40"
+                                         FlexLayout.Grow="0.1"
+                                         Clicked="ImageButtonEndEvent_OnClicked"
+                                         BackgroundColor="Transparent"
+                                         xct:IconTintColorEffect.TintColor="CornflowerBlue"/>
+
+                            <DatePicker x:Name="EndEventDatePicker" IsVisible="False"/>
+                            <TimePicker x:Name="EndEventTimePicker" IsVisible="False"/>
+
+                            <Label Text="{Binding SelectedTodoItem.EndEventDateTime, Mode=OneWay, StringFormat='{0:dd.MM.yyyy} {0:HH:mm}', TargetNullValue='Дата и время конца события'}"
+                                   TextColor="Black"
+                                   VerticalTextAlignment="Center"
+                                   FontSize="Subtitle"
+                                   FlexLayout.Grow="0.9">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="ImageButtonEndEvent_OnClicked"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </FlexLayout>
 
                         <Button Text="Применить" 
                                 Command="{Binding SubmitChangesCommand}"

@@ -73,25 +73,21 @@ namespace ToDoList.ViewModel
                 {
                     SelectedTodoItem.Title = item.Title;
                     SelectedTodoItem.Description = item.Description;
+                    SelectedTodoItem.StartEventDateTime = item.StartEventDateTime;
+                    SelectedTodoItem.EndEventDateTime = item.EndEventDateTime;
+
                     _selectedTodoItemNumber = TodoItems.IndexOf(item);
-                }));
-
-        private Command _resetSelectedTodoItemCommand;
-
-        public Command ResetSelectedTodoItemCommand => _resetSelectedTodoItemCommand ?? (_resetSelectedTodoItemCommand =
-            new Command(
-                () =>
-                {
-                    SelectedTodoItem.Title = string.Empty;
-                    SelectedTodoItem.Description = string.Empty;
                 }));
 
         private Command _submitChangesCommand;
         public Command SubmitChangesCommand => _submitChangesCommand ?? (_submitChangesCommand = new Command(() =>
         {
             var itemToSubmitChanges = TodoItems[_selectedTodoItemNumber];
+
             itemToSubmitChanges.Title = SelectedTodoItem.Title;
             itemToSubmitChanges.Description = SelectedTodoItem.Description;
+            itemToSubmitChanges.StartEventDateTime = SelectedTodoItem.StartEventDateTime;
+            itemToSubmitChanges.EndEventDateTime = SelectedTodoItem.EndEventDateTime;
         }));
 
         public void SaveTodoListInPreferences()

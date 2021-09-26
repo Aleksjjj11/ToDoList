@@ -14,6 +14,7 @@ namespace ToDoList
         {
             BindingContext = new MainViewModel();
             InitializeComponent();
+            InitEventHandlers();
         }
 
         private async void PanGestureRecognizer_OnPanUpdated(object sender, PanUpdatedEventArgs e)
@@ -82,6 +83,75 @@ namespace ToDoList
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             await CloseEditForm();
+        }
+        
+        private void ImageButtonStartEvent_OnClicked(object sender, EventArgs e)
+        {
+            StartEventDatePicker.Focus();
+        }
+
+        private void ImageButtonEndEvent_OnClicked(object sender, EventArgs e)
+        {
+            EndEventDatePicker.Focus();
+        }
+
+        private void InitEventHandlers()
+        {
+            var viewModel = (MainViewModel)BindingContext;
+
+            StartEventDatePicker.DateSelected += (sender, args) =>
+            {
+                viewModel.SelectedTodoItem.StartEventDateTime = args.NewDate;
+                StartEventTimePicker.Focus();
+            };
+
+            EndEventDatePicker.DateSelected += (sender, args) =>
+            {
+                viewModel.SelectedTodoItem.EndEventDateTime = args.NewDate;
+                EndEventTimePicker.Focus();
+            };
+
+            StartEventTimePicker.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(TimePicker.Time))
+                {
+                    var time = StartEventTimePicker.Time;
+
+                    if (viewModel.SelectedTodoItem.StartEventDateTime != null)
+                    {
+                        var startEventDateTime = viewModel.SelectedTodoItem.StartEventDateTime.Value;
+
+                        startEventDateTime = startEventDateTime.AddHours(-startEventDateTime.Hour);
+                        startEventDateTime = startEventDateTime.AddMinutes(-startEventDateTime.Minute);
+
+                        startEventDateTime = startEventDateTime.AddHours(time.Hours);
+                        startEventDateTime = startEventDateTime.AddMinutes(time.Minutes);
+
+                        viewModel.SelectedTodoItem.StartEventDateTime = startEventDateTime;
+                    }
+                }
+            };
+
+            EndEventTimePicker.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(TimePicker.Time))
+                {
+                    var time = EndEventTimePicker.Time;
+
+                    if (viewModel.SelectedTodoItem.EndEventDateTime != null)
+                    {
+                        var endEventDateTime = viewModel.SelectedTodoItem.EndEventDateTime.Value;
+
+                        endEventDateTime = endEventDateTime.AddHours(-endEventDateTime.Hour);
+                        endEventDateTime = endEventDateTime.AddMinutes(-endEventDateTime.Minute);
+
+                        endEventDateTime = endEventDateTime.AddHours(time.Hours);
+                        endEventDateTime = endEventDateTime.AddMinutes(time.Minutes);
+
+                        viewModel.SelectedTodoItem.EndEventDateTime = endEventDateTime;
+                    }
+                }
+            };
         }
     }
 }
