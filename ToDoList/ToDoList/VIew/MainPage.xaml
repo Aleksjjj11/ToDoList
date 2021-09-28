@@ -15,36 +15,52 @@
                                      Duration="400"
                                      Target="{x:Reference AddButton}"/>
     </ContentPage.Resources>
+    
     <Grid BackgroundColor="#82B1FF">
         <StackLayout Orientation="Vertical" Padding="5">
-            <StackLayout.GestureRecognizers>
-                <PanGestureRecognizer PanUpdated="PanGestureRecognizer_OnPanUpdated"/>
-            </StackLayout.GestureRecognizers>
+            <StackLayout.Margin>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <On Platform="iOS" Value="0,35,0,0" />
+                    <On Platform="Android" Value="0,0,0,0" />
+                </OnPlatform>
+            </StackLayout.Margin>
             <Frame Padding="1, 0" 
                    Margin="0, 5"
-                   CornerRadius="10">
+                   CornerRadius="10"
+                   HasShadow="False">
                 <Frame.Background>
                     <LinearGradientBrush>
-                        <GradientStop Color="#aaBBDEFB"/>
-                        <GradientStop Color="#55BBDEFB"/>
-                        <GradientStop Color="#44BBDEFB"/>
-                        <GradientStop Color="#55BBDEFB"/>
-                        <GradientStop Color="#aaBBDEFB"/>
+                        <GradientStop Color="#BBDEFB"/>
+                        <GradientStop Color="#BBDEFB"/>
+                        <GradientStop Color="#BBDEFB"/>
+                        <GradientStop Color="#BBDEFB"/>
+                        <GradientStop Color="#BBDEFB"/>
                     </LinearGradientBrush>
                 </Frame.Background>
                 <FlexLayout Direction="Row">
                     <Entry FlexLayout.Grow="0.85"
                        Text="{Binding NewTodoText}"
-                       ClearButtonVisibility="WhileEditing"/>
+                       ClearButtonVisibility="WhileEditing">
+                        <Entry.BackgroundColor>
+                            <OnPlatform x:TypeArguments="Color">
+                                <On Platform="iOS" Value="Transparent" />
+                            </OnPlatform>
+                        </Entry.BackgroundColor>
+                    </Entry>
                     <ImageButton FlexLayout.Grow="0.15"
                                  x:Name="AddButton"
                                  FlexLayout.AlignSelf="Center"
                                  xct:IconTintColorEffect.TintColor="#448AFF"
-                                 Source="outline_add_circle_outline_black_24dp.png" 
                                  CornerRadius="5"
                                  HeightRequest="40"
                                  BackgroundColor="Transparent"
                                  Command="{Binding AddTodoItemCommand}">
+                        <ImageButton.Source>
+                            <OnPlatform x:TypeArguments="ImageSource">
+                                <On Platform="iOS" Value="AddButton.png"/>
+                                <On Platform="Android" Value="outline_add_circle_outline_black_24dp.png)"/>
+                            </OnPlatform>
+                        </ImageButton.Source>
                         <ImageButton.Triggers>
                             <EventTrigger Event="Clicked">
                                 <xamanimation:BeginAnimation
@@ -107,6 +123,7 @@
                                                   Grid.Column="0"/>
                                         <Label Text="{Binding Title}"
                                                LineBreakMode="WordWrap"
+                                               VerticalTextAlignment="Center"
                                                FontSize="24"
                                                TextColor="Black"
                                                Grid.Column="1">
@@ -127,14 +144,20 @@
                                                 </DataTrigger>
                                             </Label.Triggers>
                                         </Label>
-                                        <ImageButton Source="outline_delete_black_24dp.png"
-                                             xct:IconTintColorEffect.TintColor="#CD3D3D"
+                                        <ImageButton
+                                            xct:IconTintColorEffect.TintColor="#CD3D3D"
                                              HeightRequest="40"
                                              Grid.Column="2"
                                              CornerRadius="5"
                                              Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MainViewModel}}, Path=DeleteTodoItemCommand}"
                                              CommandParameter="{Binding .}"
                                              BackgroundColor="Transparent">
+                                            <ImageButton.Source>
+                                                <OnPlatform x:TypeArguments="ImageSource">
+                                                    <On Platform="iOS" Value="DeleteButton.png"/>
+                                                    <On Platform="Android" Value="outline_delete_black_24dp.png"/>
+                                                </OnPlatform>
+                                            </ImageButton.Source>
                                             <ImageButton.Triggers>
                                                 <EventTrigger Event="Clicked">
                                                     <xamanimation:BeginAnimation

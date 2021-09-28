@@ -46,9 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
   </PropertyGroup>
@@ -59,8 +57,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -70,6 +66,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\DeleteButton.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\DeleteButton.imageset\outline_delete_black_24dp.png" />
+    <ImageAsset Include="Assets.xcassets\Icons.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AddButton.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AddButton.imageset\outline_add_circle_outline_black_24dp.png" />
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
@@ -132,5 +133,8 @@
       <Project>{644600A1-C1CB-4578-AACB-AF91D4E6A491}</Project>
       <Name>ToDoList</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="empty.json" />
   </ItemGroup>
 </Project>
